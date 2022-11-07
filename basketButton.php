@@ -67,7 +67,7 @@
         if($j==0){
             $insert_query1 = "INSERT INTO 장바구니(장바구니번호, 생성일자, 아이디) VALUES ('$val1', now(), '$userid')";
             mysqli_query($mysqli, $insert_query1);
-            $insert_query2 = "INSERT INTO 주문목록(장바구니번호, 도서번호, 수량) VALUES ('$val1', '$bookNumber', '0')";
+            $insert_query2 = "INSERT INTO 주문목록(장바구니번호, 도서번호, 수량) VALUES ('$val1', '$bookNumber', '1')";
             mysqli_query($mysqli, $insert_query2);
 
             echo "<script>alert('장바구니에 추가되었습니다.')</script>";

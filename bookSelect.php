@@ -113,7 +113,6 @@
                 document.write('<input type="hidden" name="bookNumber"  value=' + arrayBookNumber[i] + '>');
                 document.write('<input type="submit" value="장바구니" formaction="http://bookdatabase.dothome.co.kr/basketButton.php">');
                 document.write('</td>');
-                document.write('</form>');
                 document.write('</tr>');
 
 
@@ -127,9 +126,8 @@
                 document.write('</td>');
 
                 //구매하기 버튼
-                document.write('<form>');
                 document.write('<td width="15%" height="30%">');
-                document.write('<input type="submit" value="구매하기" formaction="http://bookdatabase.dothome.co.kr/buy.php">');
+                document.write('<input type="submit" value="구매하기" formaction="http://bookdatabase.dothome.co.kr/buy_alone.php">');
                 document.write('</td>');
                 document.write('</tr>');
                 document.write('</form>');
