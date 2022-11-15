@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
+	<h2><a href="http://bookdatabase.dothome.co.kr/main.php">인터넷도서사이트</a></h2>
 </head>
 <body>
 <form>
@@ -20,7 +21,7 @@
 		<input type="text" name="signup_name" placeholder="성명">
 	</p>
 	<p>
-		<input type="submit" value="가입하기" formaction="http://bookdatabase.dothome.co.kr/join.php">
+		<input type="submit" value="가입하기" formaction="http://bookdatabase.dothome.co.kr/signup.php">
 	</p>
 </form>
 </body>

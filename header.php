@@ -31,6 +31,10 @@
                     <li><a href="http://bookdatabase.dothome.co.kr/basket_form.php">장바구니</a></li>
                     <li> | </li>
                     <li><a href="http://bookdatabase.dothome.co.kr/register_form.php">등록</a></li>
+                    <li> | </li>
+                    <li><a href="http://bookdatabase.dothome.co.kr/deliver_form.php">배송</a></li>
+                    <li> | </li>
+                    <li><a href="http://bookdatabase.dothome.co.kr/refund.php">환불내역</a></li>
                 <?php }?>
  
             </ul>

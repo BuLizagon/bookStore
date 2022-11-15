@@ -10,15 +10,7 @@
     if( isset($_SESSION['userid'])) $userid= $_SESSION['userid'];
     if( isset($_SESSION['userpw'])) $username= $_SESSION['userpw'];
     
-    header("Content-Type: text/html;charset=UTF-8");
-    
-    $db_user = "bookdatabase"; //데이터베이스 아이디
-    
-    $db_passwd = "MySQL80!";     //데이터베이스 비밀번호
-        
-    $db_name = "bookdatabase"; //데이터베이스 이름
-        
-    $mysqli = new mysqli("localhost", $db_user, $db_passwd, $db_name);
+    include "./dbconn.php";
 
 
 
@@ -56,10 +48,6 @@
         $arrayOrderNumber[] = $orderrow['주문번호'];
     }
 
-
-
-
-
     //도서목록코드 만들기
 
     $bookListCode_query = "SELECT * FROM `도서목록` ORDER BY 도서목록코드 DESC";
@@ -68,17 +56,12 @@
 
     $arraybookListCode = array();
 
-    //도서목폭코드 생성
+    //도서목록코드 생성
     while($bookListCoderow = mysqli_fetch_array($bookListCoderes)){
         $arraybookListCode[] = $bookListCoderow['도서목록코드'];
     }
 
-
-
-
-
-
-    //DB검색문
+    //장바구니 아이디 검색문
     $query1 = "SELECT * FROM 장바구니 WHERE 아이디='$userid';";
                 
     $res1 = mysqli_query($mysqli, $query1);
@@ -93,6 +76,7 @@
     $arrayBookAuthor = array();
     $arrayBookPublish = array();
     $arrayBookPrice = array();
+    $arrayInventory = array();
 
     //총액
     $totalPrice = 0;
@@ -100,6 +84,10 @@
     //상세정보
     $detailInfo = "";
     
+    //재고량
+    $totalInventory = array();
+
+
     //장바구니번호 배열 넣기
     while($row1 = mysqli_fetch_array($res1)){
         $arrayBasketNumber[] = $row1['장바구니번호'];
@@ -130,6 +118,7 @@
             $arrayBookAuthor[] = $row3['저자'];
             $arrayBookPublish[] = $row3['출판사'];
             $arrayBookPrice[] = $row3['판매가'];
+            $arrayInventory[] = $row3['재고량'];
         }
     }
     //총액 계산문
@@ -145,24 +134,33 @@
         $bk="권, ";                      //권
         $mix = $bn.$bx.$bk;              //위의 3개 합체
         $detailInfo = $detailInfo.$mix;
-    }
-    if(!$userid){
-        echo "<script>alert('회원가입 해주세요.');history.back();</script>";
+        $bi = $arrayInventory[$s];      //재고량
+        $totalInventory[$s]=$bi - $bx;
     }
 
 
     if(count($arrayAddress)!=0 && count($arrayCardinfo)!= 0){
 
-            //주문번호
+        if(!$arrayBasketNumber[0]){
+            echo "<script>alert('도서를 장바구니에 담아 주세요.')</script>";
+            echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
+        }
+        if($totalInventory==0){
+            echo "<script>alert('재고가 없습니다..')</script>";
+            echo "<script>history.back();</script>";
+        }
+        else{//주문번호
             $valNumber = $arrayOrderNumber[0] + 1;
 
-            $query = "INSERT INTO 주문(주문번호, 상세정보, 주문총액, 주문일자, 아이디) VALUES ('$valNumber', '$detailInfo', '$totalPrice', now(), '$userid')";
+            $query = "INSERT INTO 주문(주문번호, 상세정보, 주문총액, 주문일자, 아이디, 주문상태, 반품사유, 환불일자, 환불총액) VALUES ('$valNumber', '$detailInfo', '$totalPrice', now(), '$userid', '준비중', '0', '0', '0')";
         
             mysqli_query($mysqli, $query);
 
+
             for($a=0; $a<count($arrayBasketNumber); $a++){
                 $aban = "";
-                $abna = $arrayBookNumber[$a];
+                $aban = $arrayBookNumber[$a];
+                $strval = 0;
                 
                 //도서목록코드
                 if($arraybookListCode[0]>=5000){
@@ -173,18 +171,20 @@
                 }
 
                 
-                $query5 = "INSERT INTO 도서목록(도서번호, 주문번호, 도서목록코드) VALUES ('$abna','$valNumber', '$strval')";
+                $query5 = "INSERT INTO 도서목록(도서번호, 주문번호, 도서목록코드) VALUES ('$aban','$valNumber', '$strval')";
         
                 mysqli_query($mysqli, $query5);
+
+                $query6 = "UPDATE `도서` SET `재고량` = '$totalInventory[$a]' WHERE `도서번호`='$aban';";
+        
+                mysqli_query($mysqli, $query6);
             }
 
 
-        echo "<script>alert('구매가 완료되었습니다.')</script>";
-        echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
+            echo "<script>alert('구매가 완료되었습니다.')</script>";
+            echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
 
-        $query6 = "DELETE FROM `장바구니`;";
-        
-        mysqli_query($mysqli, $query6);
+        }
     }
     else{
         echo "<script>alert('등록을 해주세요.')</script>";

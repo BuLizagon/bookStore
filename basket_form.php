@@ -10,15 +10,7 @@
    
     header('loaction:'.$prevPage);
 
-    header("Content-Type: text/html;charset=UTF-8");
- 
-    $db_user = "bookdatabase"; //데이터베이스 아이디
-
-    $db_passwd = "MySQL80!";     //데이터베이스 비밀번호
-
-    $db_name = "bookdatabase"; //데이터베이스 이름 
-
-    $mysqli = new mysqli("localhost", $db_user, $db_passwd, $db_name);
+    include "./dbconn.php";
     
 
     if(!$userid){
@@ -26,7 +18,7 @@
         echo "<script>history.back();</script>";
     }else{
         
-        //DB검색문
+        //장바구니 아이디 검색문
         $query1 = "SELECT * FROM 장바구니 WHERE 아이디='$userid';";
                 
         $res1 = mysqli_query($mysqli, $query1);
@@ -146,6 +138,7 @@
 
                     //도서번호
                     document.write('<td>');
+                    document.write('<input type="hidden" name = "bookNumber" value=' + arrayBookNumber[i] + '>');
                     document.write('<input type="hidden" name = "basketNumber" value=' + arrayBasketNumber[i] + '>');
                     document.write(arrayBookNumber[i]);
                     document.write('</td>');
@@ -162,6 +155,7 @@
                     
                     //수량
                     document.write('<td>');
+                    document.write('<input type="hidden" name = "bookCount" value=' + arrayBookCount[i] + '>');
                     document.write(arrayBookCount[i]);
                     document.write('</td>');
 

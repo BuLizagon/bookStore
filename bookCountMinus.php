@@ -16,21 +16,11 @@
    
     header('loaction:'.$prevPage);
 
-    header("Content-Type: text/html;charset=UTF-8");
- 
-    $db_user = "bookdatabase"; //데이터베이스 아이디
-
-    $db_passwd = "MySQL80!";     //데이터베이스 비밀번호
-
-    $db_name = "bookdatabase"; //데이터베이스 이름 
-
-    $mysqli = new mysqli("localhost", $db_user, $db_passwd, $db_name);
-
+    include "./dbconn.php";
 
 
     $basketNumber = $_GET['basketNumber'];
 
-    
 
 
         $query1 = "SELECT * FROM `주문목록` WHERE 장바구니번호 = '$basketNumber';";
@@ -47,14 +37,19 @@
         $minusCount = $arrayBookCount[0] - 1;
         $abn = $arrayBasketNumber[0];
 
-        $query2 = "UPDATE `주문목록` SET `수량` = '$minusCount' WHERE  `장바구니번호`='$abn';";
-        $res2 = mysqli_query($mysqli, $query2);
+        if($minusCount==0){
+            $query="UPDATE `주문목록` SET SET `수량` = '1' WHERE  `장바구니번호`='$abn';";
+            $res = mysqli_query($mysqli, $query);
+            echo "<script>alert('삭제시켜주세요.')</script>";
+            echo "<script>history.back();</script>";
+        }else{
+            $query2 = "UPDATE `주문목록` SET `수량` = '$minusCount' WHERE  `장바구니번호`='$abn';";
+            $res2 = mysqli_query($mysqli, $query2);
 
         echo "<script>history.back();</script>";
+        }
     }
     else{
-        $query="UPDATE `주문목록` SET `장바구니번호`='$basketNumber',`도서번호`='$bookNumber',`수량`='0'";
-        $res = mysqli_query($mysqli, $query);
         echo "<script>history.back();</script>";
     }
 

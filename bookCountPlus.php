@@ -15,36 +15,41 @@
 	$prevPage = $_SERVER['HTTP_REFERER'];
    
     header('loaction:'.$prevPage);
-
-    header("Content-Type: text/html;charset=UTF-8");
  
-    $db_user = "bookdatabase"; //데이터베이스 아이디
-
-    $db_passwd = "MySQL80!";     //데이터베이스 비밀번호
-
-    $db_name = "bookdatabase"; //데이터베이스 이름 
-
-    $mysqli = new mysqli("localhost", $db_user, $db_passwd, $db_name);
-
+    include "./dbconn.php";
     
+    $bookNumber = $_GET['bookNumber'];
+
     $basketNumber = $_GET['basketNumber'];
 
+    $bookCount = $_GET['bookCount'];
 
-    
-    if($mysqli){
-        
+
+    //재고량
+    $inventory_query = "SELECT * FROM `도서` WHERE 도서번호 = '$bookNumber';";
+    $inventory_res = mysqli_query($mysqli, $inventory_query);
+
+    $arrayInventory = array();
+
+    while($inventory_row = mysqli_fetch_array($inventory_res)){
+        $arrayInventory[] = $inventory_row['재고량'];
+    }
+
+
+    if($bookCount < $arrayInventory[0]){
+            
         //장바구니번호로 주문목록검색
         $query1 = "SELECT * FROM `주문목록` WHERE 장바구니번호 = '$basketNumber';";
         $res1 = mysqli_query($mysqli, $query1);
 
         $arrayBasketNumber = array();
         $arrayBookCount = array();
-                        
+                            
         while($row1 = mysqli_fetch_array($res1)){
             $arrayBasketNumber[] = $row1['장바구니번호'];
             $arrayBookCount[] = $row1['수량'];
         }
-        
+            
         $plusCount = $arrayBookCount[0] + 1;
         $abn = $arrayBasketNumber[0];
 
@@ -53,7 +58,8 @@
         echo "<script>history.back();</script>";
     }
     else{
-        echo "DB연결실패";
+        echo "<script>alert('재고량을 초과하셨습니다.')</script>";
+        echo "<script>history.back();</script>";
     }
 
     mysqli_close($mysqli);
