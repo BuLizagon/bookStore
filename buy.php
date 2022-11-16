@@ -48,17 +48,17 @@
         $arrayOrderNumber[] = $orderrow['주문번호'];
     }
 
-    //도서목록코드 만들기
+    //주문항목코드 만들기
 
-    $bookListCode_query = "SELECT * FROM `도서목록` ORDER BY 도서목록코드 DESC";
+    $bookListCode_query = "SELECT * FROM `주문항목` ORDER BY 주문항목코드 DESC";
 
     $bookListCoderes = mysqli_query($mysqli, $bookListCode_query);
 
     $arraybookListCode = array();
 
-    //도서목록코드 생성
+    //주문항목코드 생성
     while($bookListCoderow = mysqli_fetch_array($bookListCoderes)){
-        $arraybookListCode[] = $bookListCoderow['도서목록코드'];
+        $arraybookListCode[] = $bookListCoderow['주문항목코드'];
     }
 
     //장바구니 아이디 검색문
@@ -87,15 +87,19 @@
     //재고량
     $totalInventory = array();
 
+    //주문항목 도서번호
+    $aban = " ";
+    
+
 
     //장바구니번호 배열 넣기
     while($row1 = mysqli_fetch_array($res1)){
         $arrayBasketNumber[] = $row1['장바구니번호'];
     }
-    //장바구니번호로 주문목록에서 추출
+    //장바구니번호로 장바구니항목에서 추출
     for($i=0; $i < count($arrayBasketNumber); $i++){
         $j=$arrayBasketNumber[$i];
-        $query2 = "SELECT * FROM 주문목록 WHERE 장바구니번호='$j'";
+        $query2 = "SELECT * FROM `장바구니항목` WHERE `장바구니번호`='$j'";
 
         $res2 = mysqli_query($mysqli, $query2);
 
@@ -134,62 +138,77 @@
         $bk="권, ";                      //권
         $mix = $bn.$bx.$bk;              //위의 3개 합체
         $detailInfo = $detailInfo.$mix;
+
         $bi = $arrayInventory[$s];      //재고량
-        $totalInventory[$s]=$bi - $bx;
+        $totalInventory[$s] = $bi - $bx;
     }
 
 
-    if(count($arrayAddress)!=0 && count($arrayCardinfo)!= 0){
 
-        if(!$arrayBasketNumber[0]){
-            echo "<script>alert('도서를 장바구니에 담아 주세요.')</script>";
-            echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
-        }
-        if($totalInventory==0){
-            echo "<script>alert('재고가 없습니다..')</script>";
-            echo "<script>history.back();</script>";
-        }
-        else{//주문번호
-            $valNumber = $arrayOrderNumber[0] + 1;
-
-            $query = "INSERT INTO 주문(주문번호, 상세정보, 주문총액, 주문일자, 아이디, 주문상태, 반품사유, 환불일자, 환불총액) VALUES ('$valNumber', '$detailInfo', '$totalPrice', now(), '$userid', '준비중', '0', '0', '0')";
-        
-            mysqli_query($mysqli, $query);
-
-
-            for($a=0; $a<count($arrayBasketNumber); $a++){
-                $aban = "";
-                $aban = $arrayBookNumber[$a];
-                $strval = 0;
-                
-                //도서목록코드
-                if($arraybookListCode[0]>=5000){
-                    $strval = $arraybookListCode[0] + 1;
-                }else{
-                    $arraybookListCode[0]=5000;
-                    $strval = $arraybookListCode[0];
-                }
-
-                
-                $query5 = "INSERT INTO 도서목록(도서번호, 주문번호, 도서목록코드) VALUES ('$aban','$valNumber', '$strval')";
-        
-                mysqli_query($mysqli, $query5);
-
-                $query6 = "UPDATE `도서` SET `재고량` = '$totalInventory[$a]' WHERE `도서번호`='$aban';";
-        
-                mysqli_query($mysqli, $query6);
-            }
-
-
-            echo "<script>alert('구매가 완료되었습니다.')</script>";
-            echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
-
-        }
+    if(in_array('0', $arrayInventory)){
+        echo "<script>alert('재고가 없습니다.')</script>";
+        echo "<script>history.back();</script>";
     }
     else{
-        echo "<script>alert('등록을 해주세요.')</script>";
-        echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
+        if(count($arrayAddress)!=0 && count($arrayCardinfo)!= 0){
+            
+            if(!$arrayBasketNumber[0]){
+                echo "<script>alert('도서를 장바구니에 담아 주세요.')</script>";
+                echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
+            }
+                
+            else{
+                    
+                //주문번호
+                $valNumber = $arrayOrderNumber[0] + 1;
+        
+                $query = "INSERT INTO 주문(주문번호, 상세정보, 주문총액, 주문일자, 아이디, 주문상태, 반품사유, 환불일자, 환불총액) VALUES ('$valNumber', '$detailInfo', '$totalPrice', now(), '$userid', '준비중', '0', '0', '0')";
+                
+                mysqli_query($mysqli, $query);
+        
+                //주문항목코드
+                if($arraybookListCode[0]<5000){
+                    $arraybookListCode[0] = 4999;
+                }
+                
+                for($a=0; $a < count($arrayBasketNumber);$a++){
+                    
+                    $aban = $arrayBookNumber[$a];
+                    
+                    $ti = $totalInventory[$a];
+                    
+                    $orderItemListCode = $arraybookListCode[0] + 1;        
+                    
+                    if($orderItemListCode>=5000){
+                        $query5 = "INSERT INTO `주문항목`(`도서번호`, `주문번호`, `주문항목코드`, `수량`, `반품수량`) VALUES ('$aban','$valNumber', '$orderItemListCode', '$bx', '0');";
+                    
+                        mysqli_query($mysqli, $query5);
+
+                        $query6 = "UPDATE `도서` SET `재고량` = '$ti' WHERE `도서번호`='$aban';";
+                    
+                        mysqli_query($mysqli, $query6);
+
+                        $arraybookListCode[0]=$orderItemListCode; 
+                    }
+                    
+
+                    
+                    echo "<script>alert('구매가 완료되었습니다.')</script>";
+                    echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
+                }
+        
+            }
+        }
+        else{
+            echo "<script>alert('등록을 해주세요.')</script>";
+            echo "<script>location.href='http://bookdatabase.dothome.co.kr/main.php'</script>";
+        }
     }
+
+
+
+
+    
 
     mysqli_close($mysqli);
 ?>

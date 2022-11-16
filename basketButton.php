@@ -24,13 +24,15 @@
         
         $select_query = "SELECT * FROM `장바구니` ORDER BY 장바구니번호 DESC";
         
-        $select_query2 = "SELECT `도서번호` FROM `주문목록`";
+        $select_query2 = "SELECT `도서번호` FROM `장바구니항목` WHERE `장바구니번호` IN (SELECT `장바구니번호` FROM `장바구니` WHERE `아이디`= '$userid');";
+
         
         //장바구니검색
         $res=mysqli_query($mysqli, $select_query);
         
         //도서번호검색
         $res2=mysqli_query($mysqli, $select_query2);
+
 
 
         $arrayBasketNumber = array();
@@ -41,8 +43,8 @@
             $arrayBasketNumber[] = $row['장바구니번호'];
         }
 
-        while($row = mysqli_fetch_array($res2)){
-            $arrayBookNumber[] = $row['도서번호'];
+        while($row2 = mysqli_fetch_array($res2)){
+            $arrayBookNumber[] = $row2['도서번호'];
         }
 
         
@@ -61,7 +63,7 @@
         if($j==0){
             $insert_query1 = "INSERT INTO 장바구니(장바구니번호, 생성일자, 아이디) VALUES ('$val1', now(), '$userid')";
             mysqli_query($mysqli, $insert_query1);
-            $insert_query2 = "INSERT INTO 주문목록(장바구니번호, 도서번호, 수량) VALUES ('$val1', '$bookNumber', '1')";
+            $insert_query2 = "INSERT INTO 장바구니항목(장바구니번호, 도서번호, 수량) VALUES ('$val1', '$bookNumber', '1')";
             mysqli_query($mysqli, $insert_query2);
 
             echo "<script>alert('장바구니에 추가되었습니다.')</script>";

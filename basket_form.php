@@ -43,7 +43,7 @@
 
         for($i=0; $i < count($arrayBasketNumber); $i++){
             $j=$arrayBasketNumber[$i];
-            $query2 = "SELECT * FROM 주문목록 WHERE 장바구니번호='$j'";
+            $query2 = "SELECT * FROM 장바구니항목 WHERE 장바구니번호='$j'";
 
             $res2 = mysqli_query($mysqli, $query2);
 

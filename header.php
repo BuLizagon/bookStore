@@ -34,7 +34,7 @@
                     <li> | </li>
                     <li><a href="http://bookdatabase.dothome.co.kr/deliver_form.php">배송</a></li>
                     <li> | </li>
-                    <li><a href="http://bookdatabase.dothome.co.kr/refund.php">환불내역</a></li>
+                    <li><a href="http://bookdatabase.dothome.co.kr/refund_form.php">환불내역</a></li>
                 <?php }?>
  
             </ul>

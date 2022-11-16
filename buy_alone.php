@@ -28,9 +28,9 @@
     }
 
 
-    //도서목록코드 만들기
+    //주문항목코드 만들기
 
-    $bookListCode_query = "SELECT * FROM `도서목록` ORDER BY 도서목록코드 DESC";
+    $bookListCode_query = "SELECT * FROM `주문항목` ORDER BY 주문항목코드 DESC";
 
     $bookListCoderes = mysqli_query($mysqli, $bookListCode_query);
 
@@ -38,7 +38,7 @@
 
     //도서목폭코드 생성
     while($bookListCoderow = mysqli_fetch_array($bookListCoderes)){
-        $arraybookListCode[] = $bookListCoderow['도서목록코드'];
+        $arraybookListCode[] = $bookListCoderow['주문항목코드'];
     }
 
     if(!$userid){
@@ -80,7 +80,7 @@
         
 
         if($totalInventory==0){
-            echo "<script>alert('재고가 없습니다..')</script>";
+            echo "<script>alert('재고가 없습니다.')</script>";
             echo "<script>history.back();</script>";
         }else{
             //주문번호
@@ -94,15 +94,14 @@
 
             $strval = 0;
                 
-            //도서목록코드
-            if($arraybookListCode[0]>=5000){
-                $strval = $arraybookListCode[0] + 1;
-            }else{
-                $arraybookListCode[0]=5000;
-                $strval = $arraybookListCode[0];
+            //주문항목코드
+            if($arraybookListCode[0]<5000){
+                $arraybookListCode[0] = 4999;
             }
+            
+            $orderItemListCode = $arraybookListCode[0] + 1;  
 
-            $query5 = "INSERT INTO 도서목록(도서번호, 주문번호, 도서목록코드) VALUES ('$bookNumber','$valNumber', '$strval')";
+            $query5 = "INSERT INTO `주문항목`(`도서번호`, `주문번호`, `주문항목코드`, `수량`, `반품수량`) VALUES ('$bookNumber','$valNumber', '$orderItemListCode', '1', '0')";
         
             mysqli_query($mysqli, $query5);
 

@@ -38,8 +38,8 @@
 
     if($bookCount < $arrayInventory[0]){
             
-        //장바구니번호로 주문목록검색
-        $query1 = "SELECT * FROM `주문목록` WHERE 장바구니번호 = '$basketNumber';";
+        //장바구니번호로 장바구니항목검색
+        $query1 = "SELECT * FROM `장바구니항목` WHERE 장바구니번호 = '$basketNumber';";
         $res1 = mysqli_query($mysqli, $query1);
 
         $arrayBasketNumber = array();
@@ -53,7 +53,7 @@
         $plusCount = $arrayBookCount[0] + 1;
         $abn = $arrayBasketNumber[0];
 
-        $query2 = "UPDATE `주문목록` SET `수량` = '$plusCount' WHERE  `장바구니번호`='$abn';";
+        $query2 = "UPDATE `장바구니항목` SET `수량` = '$plusCount' WHERE  `장바구니번호`='$abn';";
         $res2 = mysqli_query($mysqli, $query2);
         echo "<script>history.back();</script>";
     }
