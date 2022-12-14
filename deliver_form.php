@@ -170,20 +170,11 @@
                         document.write('</select>');
                         document.write('</td>');
 
-
-                        //반품선택
-                        document.write('<td>');
-                        document.write('<select id="deliverReturn" name="deliverReturn" size="1" onchange="changeSelect()">');
-                        document.write('<option value = "전체반품">전체반품</option>');
-                        document.write('<option value = "일부반품">일부반품</option>');
-                        document.write('</select>');
-                        document.write('</td>');
-
                         
 
                         //환불버튼
                         document.write('<td>');
-                        document.write('<input type="submit" value="환불" formaction="http://bookdatabase.dothome.co.kr/deliverNo.php">');
+                        document.write('<input type="submit" value="환불" formaction="http://bookdatabase.dothome.co.kr/refund.php">');
                         document.write('</td>');
 
                         document.write('</tr>');
@@ -191,8 +182,6 @@
                     }
                     
                 }
-
-
 
                 document.write('</table>');
 

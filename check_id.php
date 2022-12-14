@@ -19,7 +19,18 @@
    $result=mysqli_query($mysqli, $query);
    $rowNum=mysqli_num_rows($result);
 
-	if($rowNum){
+   //관리자 아이디,비밀번호
+   $query5 = "SELECT `관리자아이디` FROM `관리자`;";
+
+   $res5=mysqli_query($mysqli, $query5);
+
+   $arrayManagerid = array();
+
+   while($row5 = mysqli_fetch_array($res5)){
+       $arrayManagerid[] = $row5['관리자아이디'];
+   }
+
+	if($rowNum!=0 OR $arrayManagerid[0]==$signup_id){
       
 		echo "<script>alert('해당 아이디가 존재합니다.')</script>";
       echo "<script>history.back();</script>";

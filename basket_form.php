@@ -23,6 +23,12 @@
                 
         $res1 = mysqli_query($mysqli, $query1);
 
+        //적립금 검색문
+        $query4 = "SELECT * FROM 회원 WHERE 아이디='$userid';";
+                
+        $res4 = mysqli_query($mysqli, $query4);
+
+
         //장바구니번호, 도서번호, 수량
         $arrayBasketNumber = array();
         $arrayBookNumber = array();
@@ -33,6 +39,9 @@
         $arrayBookAuthor = array();
         $arrayBookPublish = array();
         $arrayBookPrice = array();
+
+        //적립금 배열
+        $arrayUserPoint = array();
 
         //총액
         $totalPrice = 0;
@@ -72,6 +81,11 @@
             $price = $arrayBookPrice[$t]*$arrayBookCount[$t];
             $totalPrice = $price + $totalPrice; 
         }
+
+        //회원의 적립금
+        while($row4 = mysqli_fetch_array($res4)){
+            $arrayUserPoint[] = $row4['적립금'];
+        }
     }
 
 ?>
@@ -97,6 +111,7 @@
         var arrayBookPublish = <?php echo json_encode($arrayBookPublish)?>;    //출판사
         var arrayBookPrice = <?php echo json_encode($arrayBookPrice)?>;        //판매가
         var totalPrice = <?php echo json_encode($totalPrice)?>;                //총액
+        var arrayUserPoint = <?php echo json_encode($arrayUserPoint)?>;  //회원의 적립금
 
         
                 
@@ -181,19 +196,31 @@
                 document.write('</td>');
                 document.write('</tr>');
 
-                //총액
-                document.write('<td colspan="2">');
+                //회원의 적립금
+                document.write('<form>');
+                document.write('<tr>');
+                document.write('<td colspan="3">');
                 document.write('<div style="text-align:center;">');
-                document.write('총액 : ');
-                document.write(totalPrice);
+                document.write('나의 적립금 : ');
+                document.write(arrayUserPoint[0]);
                 document.write('</div>');
                 document.write('</td>');
 
+                //적립금사용
+                document.write('<td colspan="3">');
+                document.write('<div style="text-align:center;">');
+                document.write('적립금사용 : ');
+                document.write('<input type="text" placeholder="적립금입력" name="bookPoint">');
+                document.write('</div>');
+                document.write('</td>');
+                document.write('</tr>');
 
-                //구매하기
-                document.write('<form>');
-                document.write('<td colspan="2">');
+                //총액 구매하기
+                document.write('<tr>');
+                document.write('<td colspan="6">');
                 document.write('<div style="text-align:right;">');
+                document.write('총액 : ');
+                document.write(totalPrice);
                 document.write('<input type="submit" value="구매하기" formaction="http://bookdatabase.dothome.co.kr/buy.php">');
                 document.write('</div>');
                 document.write('</td>');

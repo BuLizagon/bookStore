@@ -32,6 +32,7 @@
         $arrayOrdering = array();  //주문상태
         $arrayOrderingNot = array();  //반품사유
         $arrayOrderRefundDate = array();//환불일자
+        $arrayOrderRefundPrice = array();//환불총액
 
         while($row1 = mysqli_fetch_array($res1)){
             $arrayOrderingNumber[] = $row1['주문번호'];
@@ -41,6 +42,7 @@
             $arrayOrdering[] = $row1['주문상태'];
             $arrayOrderingNot[] = $row1['반품사유'];
             $arrayOrderRefundDate[] = $row1['환불일자'];
+            $arrayOrderRefundPrice[] = $row1['환불총액'];
         }
 
 
@@ -69,6 +71,7 @@
         var arrayOrdering =  <?php echo json_encode($arrayOrdering)?>;              //주문상태
         var arrayOrderingNot = <?php echo json_encode($arrayOrderingNot)?>;    //반품사유
         var arrayOrderRefundDate = <?php echo json_encode($arrayOrderRefundDate)?>  //환불일자
+        var arrayOrderRefundPrice = <?php echo json_encode($arrayOrderRefundPrice)?>  //환불총액
         
                 
                 //테이블 생성
@@ -86,7 +89,7 @@
                 document.write('</td>');
 
                 document.write('<td>');
-                document.write('주문총액');
+                document.write('환불총액');
                 document.write('</td>');
 
                 document.write('<td>');
@@ -117,10 +120,10 @@
                         document.write(arrayOrderingDetail[i]);
                         document.write('</td>');
                         
-                        //주문총액
+                        //환불총액
                         document.write('<td>');
-                        document.write('<input type="hidden" name = "OrderingPrice" value=' + arrayOrderingPrice[i] + '>');
-                        document.write(arrayOrderingPrice[i]);
+                        document.write('<input type="hidden" name = "OrderingPrice" value=' + arrayOrderRefundPrice[i] + '>');
+                        document.write(arrayOrderRefundPrice[i]);
                         document.write('</td>');
                         
                         //주문상태

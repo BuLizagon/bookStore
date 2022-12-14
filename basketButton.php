@@ -13,6 +13,8 @@
     header("Content-Type: text/html;charset=UTF-8");
     
     include "./dbconn.php";
+
+    $time_now = date("Y-m-d");
     
     $bookNumber=$_GET['bookNumber']; //도서번호
         
@@ -26,7 +28,6 @@
         
         $select_query2 = "SELECT `도서번호` FROM `장바구니항목` WHERE `장바구니번호` IN (SELECT `장바구니번호` FROM `장바구니` WHERE `아이디`= '$userid');";
 
-        
         //장바구니검색
         $res=mysqli_query($mysqli, $select_query);
         
@@ -34,10 +35,9 @@
         $res2=mysqli_query($mysqli, $select_query2);
 
 
-
         $arrayBasketNumber = array();
         $arrayBookNumber = array();
-        
+
         //장바구니번호 생성
         while($row = mysqli_fetch_array($res)){
             $arrayBasketNumber[] = $row['장바구니번호'];
@@ -47,8 +47,9 @@
             $arrayBookNumber[] = $row2['도서번호'];
         }
 
-        
+
         $val1 = $arrayBasketNumber[0] + 1;
+
 
         $j=0;
         
@@ -61,7 +62,7 @@
             }
         }
         if($j==0){
-            $insert_query1 = "INSERT INTO 장바구니(장바구니번호, 생성일자, 아이디) VALUES ('$val1', now(), '$userid')";
+            $insert_query1 = "INSERT INTO 장바구니(장바구니번호, 생성일자, 아이디) VALUES ('$val1', '$time_now', '$userid')";
             mysqli_query($mysqli, $insert_query1);
             $insert_query2 = "INSERT INTO 장바구니항목(장바구니번호, 도서번호, 수량) VALUES ('$val1', '$bookNumber', '1')";
             mysqli_query($mysqli, $insert_query2);

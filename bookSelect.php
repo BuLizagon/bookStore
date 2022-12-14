@@ -45,6 +45,11 @@
                 $arrayBookAuthor = array();
                 $arrayBookPublish = array();
                 $arrayBookPrice = array();
+
+                //e북 장르코드
+                $arrayEbookGenre = array();
+                //e북 장르명
+                $arrayEbookGenreName = array();
                         
                 while($row = mysqli_fetch_array($res)){
                     $arrayBookNumber[] = $row['도서번호'];
@@ -52,6 +57,15 @@
                     $arrayBookAuthor[] = $row['저자'];
                     $arrayBookPublish[] = $row['출판사'];
                     $arrayBookPrice[] = $row['판매가'];
+                    $arrayEbookGenre[] = $row['장르코드'];
+                }
+
+                for($i=0;$i<count($arrayBookNumber);$i++){
+                    $query3 = "SELECT * FROM `장르` WHERE `장르코드` = '$arrayEbookGenre[$i]';";
+                    $res3 = mysqli_query($mysqli, $query3);
+                    while($row3 = mysqli_fetch_array($res3)){
+                        $arrayEbookGenreName[] = $row3['장르명'];
+                    }
                 }
             }
     ?>
@@ -65,6 +79,7 @@
         var arrayBookAuthor =  <?php echo json_encode($arrayBookAuthor)?>;
         var arrayBookPublish = <?php echo json_encode($arrayBookPublish)?>;
         var arrayBookPrice = <?php echo json_encode($arrayBookPrice)?>;
+        var arrayEbookGenreName = <?php echo json_encode($arrayEbookGenreName)?>;       //e북 장르명
         
 
             for(i=0; i< <?php echo count($arrayBookName); ?>; i++){
@@ -85,17 +100,41 @@
 
 
                 //이미지
+                document.write('<form>');
                 document.write('<tr>');
                 document.write('<td rowspan="2" width="20%" height="85%" align="center">');
                 document.write('<img src="null">');
                 document.write('</td>');
 
-                //도서명
+                //도서명 저자 출판사
                 document.write('<td colspan="4" width="65%" height="30%">');
+
                 document.write('<div>');
                 document.write("도서명 : ");
                 document.write(arrayBookName[i]);
                 document.write('</div>');
+
+                document.write('</br>');
+
+                document.write('<div>');
+                document.write("저자 : ");
+                document.write(arrayBookAuthor[i]);
+                document.write('</div>');
+
+                document.write('</br>');
+
+                document.write('<div>');
+                document.write("출판사 : ");
+                document.write(arrayBookPublish[i]);
+                document.write('</div>');
+
+                document.write('</br>');
+
+                document.write('<div>');
+                document.write("장르 : ");
+                document.write(arrayEbookGenreName[i]);
+                document.write('</div>');
+
                 document.write('</td>');
                 
 
@@ -104,23 +143,6 @@
                 document.write('<td width="15%" height="30%">');
                 document.write('<input type="hidden" name="bookNumber"  value=' + arrayBookNumber[i] + '>');
                 document.write('<input type="submit" value="장바구니" formaction="http://bookdatabase.dothome.co.kr/basketButton.php">');
-                document.write('</td>');
-                document.write('</tr>');
-
-
-                //저자/출판사
-                document.write('<tr>');
-                document.write('<td colspan="4" width="65%" height="30%">');
-                document.write('<div>');
-                document.write("저자/출판사 : ");
-                document.write(arrayBookAuthor[i] + "/" + arrayBookPublish[i]);
-                document.write('</div>');
-                document.write('</td>');
-
-                //구매하기 버튼
-                document.write('<td width="15%" height="30%">');
-                document.write('<input type="submit" value="구매하기" formaction="http://bookdatabase.dothome.co.kr/buy_alone.php">');
-                document.write('</td>');
                 document.write('</tr>');
                 document.write('</form>');
 
